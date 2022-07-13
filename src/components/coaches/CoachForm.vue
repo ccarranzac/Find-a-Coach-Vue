@@ -31,12 +31,16 @@
         <label for="career">Career</label>
       </div>
     </div>
+    <p v-if="!formIsValid" class="error">
+      Please fix the errors and submit again!
+    </p>
     <base-button>Register</base-button>
   </form>
 </template>
 
 <script>
 export default {
+  emits: ['saveData'],
   data() {
     return {
       firstName: '',
@@ -44,18 +48,40 @@ export default {
       description: '',
       rate: null,
       areas: [],
+      formIsValid: true,
     };
   },
   methods: {
+    validateForm() {
+      this.formIsValid = true;
+      if (this.firstName === '') {
+        this.formIsValid = false;
+      }
+      if (this.lastName === '') {
+        this.formIsValid = false;
+      }
+      if (this.description === '') {
+        this.formIsValid = false;
+      }
+      if (!this.rate || this.rate.val < 0) {
+        this.formIsValid = false;
+      }
+      if (this.areas.length === 0) {
+        this.formIsValid = false;
+      }
+    },
     submitForm() {
-      const formData = {
-        first: this.firstName,
-        last: this.lastName,
-        desc: this.description,
-        rate: this.rate,
-        areas: this.areas,
-      };
-      console.log(formData);
+      this.validateForm();
+      if (this.formIsValid) {
+        const formData = {
+          first: this.firstName,
+          last: this.lastName,
+          desc: this.description,
+          rate: this.rate,
+          areas: this.areas,
+        };
+        this.$emit('saveData', formData);
+      }
     },
   },
 };
@@ -115,5 +141,9 @@ h3 {
 .invalid input,
 .invalid textarea {
   border: 1px solid red;
+}
+
+.error {
+  color: crimson;
 }
 </style>
