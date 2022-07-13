@@ -3,23 +3,38 @@
     <h3>{{ coach.firstName + ' ' + coach.lastName }}</h3>
     <h4>${{ coach.hourlyRate }}/hour</h4>
     <div>
-      <span v-for="item in coach.areas" :key="item">{{ item }}</span>
+      <base-badge
+        v-for="item in coach.areas"
+        :key="item"
+        :type="item"
+        :title="item"
+      ></base-badge>
     </div>
     <div class="actions">
-      <router-link :to="{ name: 'contact', params: { id: coach.id } }"
-        >Contact</router-link
-      >
-      <router-link :to="{ name: 'coach-detail', params: { id: coach.id } }"
-        >View Details</router-link
-      >
+      <base-button mode="outline" @click="goContact">Contact</base-button>
+      <base-button @click="goDetail">View Details</base-button>
     </div>
   </li>
 </template>
 
 <script>
+import BaseBadge from '../ui/BaseBadge.vue';
+import BaseButton from '../ui/BaseButton.vue';
 export default {
+  components: { BaseButton, BaseBadge },
   props: {
     coach: { type: Object, required: true },
+  },
+  methods: {
+    goContact() {
+      this.$router.push({ name: 'contact', params: { id: this.coach.id } });
+    },
+    goDetail() {
+      this.$router.push({
+        name: 'coach-detail',
+        params: { id: this.coach.id },
+      });
+    },
   },
 };
 </script>
