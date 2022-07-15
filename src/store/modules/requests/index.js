@@ -3,8 +3,11 @@ import requestsGetters from './getters';
 import requestsActions from './actions';
 
 export default {
+  namespaced: true,
   state() {
-    return {};
+    return {
+      requests: [],
+    };
   },
   mutations: requestsMutations,
   getters: requestsGetters,
