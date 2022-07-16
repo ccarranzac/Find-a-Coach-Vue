@@ -1,13 +1,17 @@
 <template>
   <coach-filter @change-filter="setFilters"></coach-filter>
   <section>
-    <base-card>
+    <base-card v-if="isLoading">
+      <base-spinner></base-spinner>
+    </base-card>
+    <base-card v-else>
       <div class="controls">
-        <base-button mode="outline">Refresh</base-button>
+        <base-button mode="outline" @click="loadCoaches">Refresh</base-button>
         <base-button v-if="!isCoach" @click="goRegister"
           >Register as Coach</base-button
         >
       </div>
+
       <ul v-if="haveCoaches">
         <coach-item
           v-for="coach in filteredCoaches"
@@ -28,6 +32,7 @@ export default {
   components: { CoachItem, CoachFilter },
   data() {
     return {
+      isLoading: false,
       activeFilters: {
         frontend: true,
         backend: true,
@@ -58,12 +63,21 @@ export default {
       return this.$store.getters['coaches/haveCoaches'];
     },
   },
+  created() {
+    this.loadCoaches();
+  },
   methods: {
     goRegister() {
       this.$router.push({ name: 'register' });
     },
     setFilters(filters) {
       this.activeFilters = filters;
+    },
+    loadCoaches() {
+      this.isLoading = true;
+      this.$store.dispatch('coaches/loadCoaches').then(() => {
+        this.isLoading = false;
+      });
     },
   },
 };
