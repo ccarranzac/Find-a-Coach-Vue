@@ -1,4 +1,7 @@
 <template>
+  <base-dialog :show="!!error" title="An error ocurred!!" @close="handleError">
+    <p>{{ error }}</p>
+  </base-dialog>
   <coach-filter @change-filter="setFilters"></coach-filter>
   <section>
     <base-card v-if="isLoading">
@@ -33,6 +36,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      error: null,
       activeFilters: {
         frontend: true,
         backend: true,
@@ -75,9 +79,17 @@ export default {
     },
     loadCoaches() {
       this.isLoading = true;
-      this.$store.dispatch('coaches/loadCoaches').then(() => {
-        this.isLoading = false;
-      });
+      this.$store
+        .dispatch('coaches/loadCoaches')
+        .then(() => {
+          this.isLoading = false;
+        })
+        .catch((err) => {
+          this.error = err.message || 'Something went wrong!!';
+        });
+    },
+    handleError() {
+      this.error = null;
     },
   },
 };
