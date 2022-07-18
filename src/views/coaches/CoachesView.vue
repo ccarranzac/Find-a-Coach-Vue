@@ -9,7 +9,9 @@
     </base-card>
     <base-card v-else>
       <div class="controls">
-        <base-button mode="outline" @click="loadCoaches">Refresh</base-button>
+        <base-button mode="outline" @click="loadCoaches(true)"
+          >Refresh</base-button
+        >
         <base-button v-if="!isCoach" @click="goRegister"
           >Register as Coach</base-button
         >
@@ -77,10 +79,10 @@ export default {
     setFilters(filters) {
       this.activeFilters = filters;
     },
-    loadCoaches() {
+    loadCoaches(refresh = false) {
       this.isLoading = true;
       this.$store
-        .dispatch('coaches/loadCoaches')
+        .dispatch('coaches/loadCoaches', { forceRefresh: refresh })
         .then(() => {
           this.isLoading = false;
         })

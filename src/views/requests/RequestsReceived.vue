@@ -4,7 +4,8 @@
       <header>
         <h2>Requests Received</h2>
       </header>
-      <ul v-if="hasRequests">
+      <base-spinner v-if="isLoading"></base-spinner>
+      <ul v-if="hasRequests && !isLoading">
         <request-item
           v-for="request in requests"
           :key="request.id"
@@ -21,6 +22,11 @@ import RequestItem from '../../components/requests/RequestItem.vue';
 
 export default {
   components: { RequestItem },
+  data() {
+    return {
+      isLoading: false,
+    };
+  },
   computed: {
     requests() {
       return this.$store.getters['requests/getRequests'];
@@ -28,6 +34,22 @@ export default {
     hasRequests() {
       return this.$store.getters['requests/hasRequests'];
     },
+  },
+  methods: {
+    loadRequest() {
+      this.isLoading = true;
+      this.$store
+        .dispatch('requests/fetchRequests')
+        .then(() => {
+          this.isLoading = false;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+  created() {
+    this.loadRequest();
   },
 };
 </script>
